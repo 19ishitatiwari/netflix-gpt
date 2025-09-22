@@ -21,17 +21,22 @@
 
 // export default Header
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon } from "@heroicons/react/24/solid"; // install heroicons
 import {  signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { onAuthStateChanged } from "firebase/auth";
+import { addUser, removeUser } from "../utils/userSlice";
+import { LOGO } from "../utils/constants";
 
 const Header = () => {
     const [open, setOpen] = useState(false);
 
+    const user = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const signOutFunction = () => {
 
@@ -43,14 +48,27 @@ const Header = () => {
         });
     }
 
-    const user = useSelector((state) => state.user);
-    console.log("User in Header:", user);
+     useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const { uid, email, displayName, photoURL } = user;
+                dispatch(addUser({ uid, email, displayName, photoURL }));
+                navigate("/browse");
+            } else {
+                // User is signed out
+                dispatch(removeUser());
+                navigate("/");
+            }
+        });
 
+        return () => unsubscribe();
+    }, []);
+    
   return (
-    <div className="z-10 absolute px-2 py-4 flex justify-between w-screen items-center">
+    <div className="z-10 absolute px-2 py-4 flex justify-between w-screen items-center bg-gradient-to-b from-black">
       {/* Netflix Logo */}
       <img
-        src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2025-08-26/consent/87b6a5c0-0104-4e96-a291-092c11350111/0198e689-25fa-7d64-bb49-0f7e75f898d2/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
+        src={LOGO}
         alt="Netflix Logo"
         className="w-44"
       />
@@ -63,7 +81,7 @@ const Header = () => {
             onClick={() => setOpen(!open)}
             >
             <img
-                src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
+                src={user.photoURL}
                 alt="Profile Avatar"
                 className="w-10 h-10 rounded-lg"
             />
