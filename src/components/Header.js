@@ -1,14 +1,99 @@
-import React from 'react'
+// import React from 'react'
+
+// const Header = () => {
+//   return (
+//     <div className='z-10 absolute px-2 py-4 flex justify-between w-screen'>
+//       <img src='https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2025-08-26/consent/87b6a5c0-0104-4e96-a291-092c11350111/0198e689-25fa-7d64-bb49-0f7e75f898d2/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png'
+//         alt='Netflix Logo'
+//         className='w-44'
+//         />
+//         <div>
+//             <img src='https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'
+//             alt='Profile Avatar'
+//             className='w-10 h-10 rounded-lg float-right cursor-pointer'
+//             />
+
+//             <span >(Sign Out)</span>
+//         </div>
+//     </div>
+//   )
+// }
+
+// export default Header
+
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { ChevronDownIcon } from "@heroicons/react/24/solid"; // install heroicons
+import {  signOut } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useSelector } from "react-redux";
 
 const Header = () => {
-  return (
-    <div className='z-10 absolute px-2 py-4'>
-      <img src='https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2025-08-26/consent/87b6a5c0-0104-4e96-a291-092c11350111/0198e689-25fa-7d64-bb49-0f7e75f898d2/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png'
-        alt='Netflix Logo'
-        className='w-44'
-        />
-    </div>
-  )
-}
+    const [open, setOpen] = useState(false);
 
-export default Header
+    const navigate = useNavigate();
+
+    const signOutFunction = () => {
+
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            navigate("/");
+        }).catch((error) => {
+            navigate("/error");
+        });
+    }
+
+    const user = useSelector((state) => state.user);
+    console.log("User in Header:", user);
+
+  return (
+    <div className="z-10 absolute px-2 py-4 flex justify-between w-screen items-center">
+      {/* Netflix Logo */}
+      <img
+        src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2025-08-26/consent/87b6a5c0-0104-4e96-a291-092c11350111/0198e689-25fa-7d64-bb49-0f7e75f898d2/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
+        alt="Netflix Logo"
+        className="w-44"
+      />
+
+      {/* Profile + Dropdown */}
+      { user && (
+        <div className="relative">
+            <div
+            className="flex items-center gap-1 cursor-pointer"
+            onClick={() => setOpen(!open)}
+            >
+            <img
+                src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
+                alt="Profile Avatar"
+                className="w-10 h-10 rounded-lg"
+            />
+            <ChevronDownIcon
+                className={`w-3 h-3 text-black transition-transform ${
+                open ? "rotate-180" : "rotate-0"
+                }`}
+            />
+            </div>
+
+            {open && (
+                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg z-20">
+                    <ul className="py-2">
+                    <li className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">{user.displayName}</li>
+                    <li>
+                        <button
+                        onClick={signOutFunction}
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                            Sign Out
+                        </button>
+                    </li>
+                    </ul>
+                </div>
+            )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Header;
+

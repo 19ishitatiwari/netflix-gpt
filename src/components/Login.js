@@ -1,12 +1,77 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import Header from './Header'
+import { checkValidData } from '../utils/validate';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile  } from "firebase/auth";
+import { auth } from '../utils/firebase';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 const Login = () => {
 
     const [isSignInForm, setIsSignInForm] = useState(true);
+    const [errMsg, setErrMsg] = useState(null);
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const email = useRef(null);
+    const password = useRef(null);
+    const name = useRef(null);
 
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
+    }
+
+    const handleButtonClick = (e) => {
+        e.preventDefault();
+        const validateMsg = checkValidData(email.current.value, password.current.value, isSignInForm ? undefined : name.current.value);
+        setErrMsg(validateMsg);
+
+        if(validateMsg) return;
+console.log("Form is valid");
+        if(!isSignInForm) {
+            // Handle Sign In
+            console.log("Signing Up with", name.current.value, email.current.value, password.current.value);
+
+            createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    console.log("User created:", user);
+                    updateProfile(auth.currentUser, {
+                        displayName: name.current.value, photoURL: "https://example.com/jane-q-user/profile.jpg"
+                    }).then(() => {
+                        const { uid, email, displayName, photoURL } = auth.currentUser;
+                        dispatch(addUser({ uid, email, displayName, photoURL }));
+                        navigate("/browse");
+                    }).catch((error) => {
+                        setErrMsg(error.message);
+                    });
+
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrMsg(errorCode + " - " + errorMessage);
+                });
+        } else {
+            // Handle Sign Up
+            console.log("Signing In with", email.current.value, password.current.value);
+            signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    console.log("User logged in:", user);
+                    navigate("/browse");
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrMsg(errorCode + " - " + errorMessage);
+                });
+        }
     }
   return (
     <div>
@@ -20,11 +85,12 @@ const Login = () => {
         <form className='absolute p-12 bg-black/60 w-1/3 my-44 mx-auto left-0 right-0 text-white'>
             <h1 className='text-3xl font-bold py-4'>{isSignInForm? "Sign In" : "Sign Up"}</h1>
             {!isSignInForm &&
-                <input type='text' placeholder='Full Name' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>
+                <input ref={name} type='text' placeholder='Full Name' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>
             }
-            <input type='email' placeholder='Email Address' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>
-            <input type='password' placeholder='Password' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>
-            <button className='bg-red-600 p-4 rounded-lg my-4 font-bold w-full'>
+            <input ref={email} type='email' placeholder='Email Address' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>
+            <input ref={password} type='password' placeholder='Password' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>
+            <p className='font-bold text-red-600 text-sm pt-2 mt-2'>{errMsg}</p>
+            <button className='bg-red-600 p-4 rounded-lg my-4 font-bold w-full' onClick={handleButtonClick}>
                 {isSignInForm? "Sign In" : "Sign Up"}
             </button>
             {isSignInForm? 
