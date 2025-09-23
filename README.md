@@ -22,6 +22,10 @@
 - Fetch Data for Trailer Video
 - Update Store with Trailer Video Data
 - Embedded the Youtube video and make it autoplay, mute and on loop
+- Build Secondary Component
+- Build Movie List
+- Build Movie Card
+- usePopularMovies Custom Hook
 
 # Features
 - Login/Sign Up Page

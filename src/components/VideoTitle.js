@@ -6,7 +6,7 @@ import { InformationCircleIcon  } from "@heroicons/react/24/outline";
 const VideoTitle = ({title, overview, backdrop_path}) => {
   return (
     <div className='absolute top-0 left-0 w-screen aspect-video bg-gradient-to-r from-black'>
-        <div className='pt-72 px-12 w-1/2 absolute text-white'>
+        <div className='pt-56 px-12 w-1/2 absolute text-white'>
             <h1 className='text-4xl font-bold'>{title}</h1>
             <p className='py-6 pt-8'>{overview}</p>
             <div className='mx-4 flex gap-4'>

@@ -86,7 +86,7 @@ const Header = () => {
                 className="w-10 h-10 rounded-lg"
             />
             <ChevronDownIcon
-                className={`w-3 h-3 text-black transition-transform ${
+                className={`w-3 h-3 text-white transition-transform ${
                 open ? "rotate-180" : "rotate-0"
                 }`}
             />
