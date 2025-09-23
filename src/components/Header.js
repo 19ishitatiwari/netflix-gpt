@@ -29,7 +29,9 @@ import { auth } from "../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { addUser, removeUser } from "../utils/userSlice";
-import { LOGO } from "../utils/constants";
+import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
+import { toggleGptSearch } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
     const [open, setOpen] = useState(false);
@@ -37,6 +39,8 @@ const Header = () => {
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const showGptSearch = useSelector((state) => state.gpt.showGptSearch);
 
     const signOutFunction = () => {
 
@@ -63,9 +67,17 @@ const Header = () => {
 
         return () => unsubscribe();
     }, []);
+
+    const handleGptSearchClick = () => {
+        dispatch(toggleGptSearch());
+    }
+
+    const handleLanguageChange = (e) => {
+        dispatch(changeLanguage(e.target.value))
+    }
     
   return (
-    <div className="z-10 absolute px-2 py-4 flex justify-between w-screen items-center bg-gradient-to-b from-black">
+    <div className="z-30 absolute px-2 py-4 flex justify-between w-screen items-center bg-gradient-to-b from-black ">
       {/* Netflix Logo */}
       <img
         src={LOGO}
@@ -75,38 +87,51 @@ const Header = () => {
 
       {/* Profile + Dropdown */}
       { user && (
-        <div className="relative">
-            <div
-            className="flex items-center gap-1 cursor-pointer"
-            onClick={() => setOpen(!open)}
-            >
-            <img
-                src={user.photoURL}
-                alt="Profile Avatar"
-                className="w-10 h-10 rounded-lg"
-            />
-            <ChevronDownIcon
-                className={`w-3 h-3 text-white transition-transform ${
-                open ? "rotate-180" : "rotate-0"
-                }`}
-            />
-            </div>
-
-            {open && (
-                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg z-20">
-                    <ul className="py-2">
-                    <li className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">{user.displayName}</li>
-                    <li>
-                        <button
-                        onClick={signOutFunction}
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                        >
-                            Sign Out
-                        </button>
-                    </li>
-                    </ul>
+        <div className="flex items-center gap-2">
+            {
+                showGptSearch && 
+                <select className="p-2 bg-white bg-opacity-20 text-white rounded-lg" onChange={handleLanguageChange}>
+                    {
+                        SUPPORTED_LANGUAGES.map(lang => <option className="bg-white bg-opacity-20 text-black hover:bg-gray-100" key={lang.identifier} value={lang.identifier}>{lang.name}</option>)
+                    }
+                </select>
+            }
+            <button className="p-2 m-2 bg-white bg-opacity-20 text-white hover:bg-opacity-50 rounded-lg" onClick={handleGptSearchClick}>
+                {!showGptSearch? "GPT Search" : "Homepage" }
+            </button>
+            <div className="relative">
+                <div
+                className="flex items-center gap-1 cursor-pointer"
+                onClick={() => setOpen(!open)}
+                >
+                <img
+                    src={user.photoURL}
+                    alt="Profile Avatar"
+                    className="w-10 h-10 rounded-lg"
+                />
+                <ChevronDownIcon
+                    className={`mr-4 w-3 h-3 text-white transition-transform ${
+                    open ? "rotate-180" : "rotate-0"
+                    }`}
+                />
                 </div>
-            )}
+
+                {open && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg ">
+                        <ul className="py-2">
+                        <li className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">{user.displayName}</li>
+                        <li>
+                            <button
+                            onClick={signOutFunction}
+                            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                            >
+                                Sign Out
+                            </button>
+                        </li>
+                        </ul>
+                    </div>
+                )}
+            </div>
         </div>
       )}
     </div>

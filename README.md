@@ -26,6 +26,9 @@
 - Build Movie List
 - Build Movie Card
 - usePopularMovies Custom Hook
+- GPT Search Page 
+- GPT Search Bar
+- Multi-language feature in App
 
 # Features
 - Login/Sign Up Page
