@@ -6,13 +6,15 @@ export const API_OPTIONS = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MTRhZWI1ZWRjYzgzZDBhY2QzYTg4YWQ0ZjhjYTQ2OSIsIm5iZiI6MTc1ODU0NTQ5MC41ODMwMDAyLCJzdWIiOiI2OGQxNDY1MmM4NmQ3MjM3MjljZWM5YmEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.6T1Z2I9mxUH6f7mPZtLaPIQiNd766PegJwRvbJf4FBM'
+    Authorization: `Bearer ${process.env.REACT_APP_TMDB_KEY}`
   }
 };
 
 export const IMG_CDN = "https://image.tmdb.org/t/p/w500";
 
-export const BG_URL = 'https://assets.nflxext.com/ffe/siteui/vlv3/c95abc7a-8124-4630-bb7a-3b160bdc6de3/web/IN-en-20250915-TRIFECTA-perspective_d3d87aa7-58ed-4c6b-98dc-231ed05ba675_large.jpg'
+export const BG_URL = 'https://assets.nflxext.com/ffe/siteui/vlv3/c95abc7a-8124-4630-bb7a-3b160bdc6de3/web/IN-en-20250915-TRIFECTA-perspective_d3d87aa7-58ed-4c6b-98dc-231ed05ba675_large.jpg';
 
 export const SUPPORTED_LANGUAGES = [
-  {identifier: "en", name: "English"}, {identifier: "hindi", name: "Hindi"}, {identifier: "spanish", name: "Spanish"},]
+  {identifier: "en", name: "English"}, {identifier: "hindi", name: "Hindi"}, {identifier: "spanish", name: "Spanish"},];
+
+export const openai_key = process.env.REACT_APP_OPENAI_KEY;
