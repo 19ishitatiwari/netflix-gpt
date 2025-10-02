@@ -29,6 +29,13 @@
 - GPT Search Page 
 - GPT Search Bar
 - Multi-language feature in App
+- Open AI Integration
+- GPT search api call
+- Fetch gptMovieSuggestion from tmdb
+- Created Gptslice and added data
+- Reused Movie List component to make movie suggestion container
+- Memoization
+- Added Responsiveness to project
 
 # Features
 - Login/Sign Up Page

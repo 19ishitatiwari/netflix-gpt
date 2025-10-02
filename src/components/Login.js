@@ -69,10 +69,11 @@ const Login = () => {
         <div className='absolute'>
             <img src={BG_URL}
                 alt='Netflix Background'
+                className='h-screen object-cover w-screen'
                 />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black"></div>
-        <form className='absolute p-12 bg-black/60 w-1/3 my-44 mx-auto left-0 right-0 text-white'>
+        <form className='absolute p-12 bg-black/60 w-full md:w-1/3 my-44 mx-auto left-0 right-0 text-white'>
             <h1 className='text-3xl font-bold py-4'>{isSignInForm? "Sign In" : "Sign Up"}</h1>
             {!isSignInForm &&
                 <input ref={name} type='text' placeholder='Full Name' className='p-4 rounded-lg my-2 w-full bg-transparent border'/>

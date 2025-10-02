@@ -77,12 +77,12 @@ const Header = () => {
     }
     
   return (
-    <div className="z-30 absolute px-2 py-4 flex justify-between w-screen items-center bg-gradient-to-b from-black ">
+    <div className="z-30 absolute px-2 py-4 flex flex-col md:flex-row justify-between w-screen items-center bg-gradient-to-b from-black ">
       {/* Netflix Logo */}
       <img
         src={LOGO}
         alt="Netflix Logo"
-        className="w-44"
+        className="w-44 mx-auto md:mx-0"
       />
 
       {/* Profile + Dropdown */}
